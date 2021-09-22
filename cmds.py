@@ -242,7 +242,7 @@ class cmds(commands.Cog):
 
     
     if not mauthorid in flist1:
-      await self.applyCooldown(mauthorid, flist1, 1) # <<< you can increase or decrease the seconds according to the desired security level
+      await self.applyCooldown(mauthorid, flist1, 3) # <<< you can increase or decrease the seconds according to the desired security level
                                                      # if you increase the seconds, the user will stay longer in the list
                                                      # so the chances of a user going to the next safelist are higher
 
@@ -250,13 +250,20 @@ class cmds(commands.Cog):
       await self.applyCooldown(mauthorid, flist2, 2) # <<<
 
     elif not mauthorid in flist3:
-      await self.applyCooldown(mauthorid, flist3, 2) # <<<
+      await self.applyCooldown(mauthorid, flist3, 1) # <<<
 
     elif not mauthorid in flist4:
+      muted_role = message.author.guild.get_role(self.bot_data['roles']['muted'])
+      await message.author.add_roles(muted_role)
+      
       embed = discord.Embed(color=self.color)
       embed.set_author(name=f'{message.author.name}, please do not send messages too fast', icon_url=self.client.user.avatar_url)
       await self.sendMessage(embed, message.channel, 8)
-      await self.applyCooldown(mauthorid, flist4, 3) # <<<
+
+      await asyncio.sleep(3)
+      await message.author.remove_roles(muted_role)
+
+      await self.applyCooldown(mauthorid, flist4, 20) # <<<
     else:
       await self.deleteMessage(message)
 
